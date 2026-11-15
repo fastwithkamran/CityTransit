@@ -8,12 +8,14 @@ The project flow is..
 
 Extract data in CSV format contains coordinates of the places and roads in Karachi from [OverPass](https://overpass-turbo.eu/)
 
-Input from the user PickUp, Destination, and Vehicle
+Convert the roads data into Adjacency List
 
-Fetch [TomTom API](https://docs.tomtom.com) to update the CSV
+Ask PickUp and Destination from User
 
-Use Dijsktra to find the shortest route (result depends on Time and Distance factor)
+Search the longitude and latitude of the source and destination from places.csv
 
-Fetch Petrol API to get latest petrol prices
+Find the nearest latitude and longitude of each source and destination from roads.csv
 
-Output the cost, ETA based on TomTom API, shortest route
+Apply Dijskra on Adjacency List
+
+Display the shortest route
