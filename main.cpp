@@ -61,7 +61,7 @@ int main()
         size_t endcoords = line.find(',', 1); // find comma to extract coords
         string coords = line.substr(1, endcoords - 1);
         size_t endway = line.find(',', endcoords + 1); // find comma to extract way
-        string oneway = line.substr(endway - 1);
+        string oneway = line.substr(endcoords + 1, endway - endcoords - 1);
 
         vector<pair<double, double>> pts;
         stringstream ss(coords); // to convert it into a file stream
@@ -89,11 +89,5 @@ int main()
             if (oneway != "yes")             // if it is an undirected graph add the edge in second node
                 adj[b].push_back({a, distance});
         }
-    }
-
-    // testing
-    for (int i = 0; i < nodes.size(); i++)
-    {
-        cout << nodes[i].first << " " << nodes[i].second << endl;
     }
 }
