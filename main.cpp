@@ -40,8 +40,8 @@ double haversine(pair<double, double> p1, pair<double, double> p2)
     double radius = 6371000.0;  // earth radius in meters
     double radian = PI / 180.0; // turn GPS degrees into radians
 
-    double lat1 = p1.first, lon1 = p1.first;
-    double lat2 = p2.first, lon2 = p2.first;
+    double lat1 = p1.first, lon1 = p1.second;
+    double lat2 = p2.first, lon2 = p2.second;
 
     double dlat = (lat2 - lat1) * radian; // convert degrees into radians
     double dlon = (lon2 - lon1) * radian;
@@ -59,7 +59,7 @@ int main()
     while (getline(file, line)) // loop through all roads
     {
         size_t endcoords = line.find(',', 1); // find comma to extract coords
-        string coords = line.substr(1, endcoords - 1);
+        string coords = line.substr(0, endcoords - 1);
         size_t endway = line.find(',', endcoords + 1); // find comma to extract way
         string oneway = line.substr(endcoords + 1, endway - endcoords - 1);
 
