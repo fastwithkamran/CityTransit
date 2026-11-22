@@ -199,7 +199,7 @@ int selectInput(vector<string> &options, string label)
     cout << "Enter: ";
     cin >> userinput;
 
-    return userinput;
+    return userinput - 1; // since index starts from 0
 }
 
 // user can select a place from the Place struct
@@ -307,7 +307,8 @@ int main()
         size_t comma2 = line.find(',', comma1 + 1);
         size_t comma3 = line.find(',', comma2 + 1);
         size_t comma4 = line.find(',', comma3 + 1);
-        string district = line.substr(comma2 + 1, comma3 - comma2 - 1);
+        if (comma4 == string::npos)
+            continue;
 
         Place p; // push into the place struct
         p.lon = stod(line.substr(0, comma1));
