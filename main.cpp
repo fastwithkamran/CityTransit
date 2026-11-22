@@ -51,6 +51,65 @@ double haversine(pair<double, double> p1, pair<double, double> p2)
     return radius * chord; // return the distance in meters
 }
 
+// Find the unvisited vertex with minimum distance
+int minDistance(double dist[], bool visited[])
+{
+    int n = nodes.size();
+    double min = INFINITY;
+    int minIndex = -1;
+
+    for (int v = 0; v < n; v++)
+    {
+        if (!visited[v] && dist[v] < min)
+        {
+            min = dist[v];
+            minIndex = v;
+        }
+    }
+    return minIndex;
+}
+
+void dijkstra(int source, int destination)
+{
+    int n = nodes.size();
+    double *dist = new double[n];
+    bool *visited = new bool[n];
+
+    for (int i = 0; i < n; i++)
+    { // Initialization
+        dist[i] = INFINITY;
+        visited[i] = false;
+    }
+
+    // source distance is 0
+    dist[source] = 0;
+
+    // process all vertices
+    for (int count = 0; count < n; count++)
+    {
+        int u = minDistance(dist, visited);
+        if (u == destination || u == -1)
+            break; // reached destination or not reachable
+
+        visited[u] = true;
+
+        for (auto e : adj[u])
+        {
+            int v = e.to; // get the neighbour node
+            if (!visited[v] && dist[u] + e.distance < dist[v])
+                dist[v] = dist[u] + e.distance;
+        }
+    }
+
+    if (dist[destination] == INFINITY)
+        cout << "No route" << endl;
+    else
+        cout << "Shortest distance " << dist[destination] << endl;
+
+    delete[] dist;
+    delete[] visited;
+}
+
 int main()
 {
     ifstream file("Karachi_Roads.csv"); // Extracting the coords from the csv to form adj list
@@ -90,4 +149,6 @@ int main()
                 adj[b].push_back({a, distance});
         }
     }
+
+    dijkstra(0, 100);
 }
