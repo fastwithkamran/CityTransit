@@ -4,6 +4,7 @@
 #include <vector>
 #include <sstream>
 #include <unordered_map>
+#include <cmath>
 using namespace std;
 
 struct Edge
@@ -88,5 +89,11 @@ int main()
             if (oneway != "yes")             // if it is an undirected graph add the edge in second node
                 adj[b].push_back({a, distance});
         }
+    }
+
+    // testing
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        cout << nodes[i].first << " " << nodes[i].second << endl;
     }
 }
