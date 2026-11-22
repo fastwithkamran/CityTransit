@@ -6,18 +6,33 @@
 #include <unordered_map>
 using namespace std;
 
+vector<pair<double, double>> nodes; // each node has (lat, lon)
+vector<vector<Edge>> adj;           // adjacency list
+unordered_map<string, int> ids;     // unique coordinate pair is a node
+
 struct Edge
 {
     int to;
     double len;
 };
 
+int getNode(double lat, double lon)
+{
+    string key = to_string(lat) + "," + to_string(lon); // convert the coord into a key
+    auto flag = ids.find(key);                          // check is this key exists in map, returns the address
+    if (flag != ids.end())                              // found, reuse the id
+        return flag->second;                            // return the id
+
+    int id = nodes.size();
+    ids[key] = id;               // add key into the map
+    nodes.push_back({lat, lon}); // push the new node
+    adj.push_back({});           // edge list for the new node
+
+    return id;
+}
+
 int main()
 {
-    vector<pair<double, double>> nodes; // each node has (lat, lon)
-    vector<vector<Edge>> adj;           // adjacency list
-    unordered_map<string, int> id;      // unique coordinate pair is a node
-
     ifstream file("Karachi_Roads.csv"); // Extracting the coords from the csv to form adj list
     string line;
     getline(file, line);        // to skip the header
@@ -37,6 +52,12 @@ int main()
             double lon = stod(p.substr(0, gap)); // stod converts string to double
             double lat = stod(p.substr(gap + 1));
             pts.push_back({lat, lon}); // push the lat lon
+        }
+
+        vector<int> neighbors;
+        for (int i = 0; i < pts.size(); i++)
+        {
+            neighbors.push_back(getNode(pts[i].first, pts[i].second)); // create the node, or get the neighbor id
         }
     }
 }
