@@ -153,6 +153,8 @@ void dijkstra(int source, int destination)
 
     delete[] dist;
     delete[] visited;
+    delete[] route;
+    delete[] roads;
 }
 
 // Find the nearest road of user source and destination
