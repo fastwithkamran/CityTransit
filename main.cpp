@@ -160,6 +160,9 @@ int main()
     getline(file, line);        // to skip the header
     while (getline(file, line)) // loop through all roads
     {
+        if (!line.empty() && line.back() == '\r')
+            line.pop_back(); // remove the carriage return from the line
+
         size_t endcoords = line.find(',', 1); // find comma to extract coords
         string coords = line.substr(0, endcoords - 1);
         size_t endway = line.find(',', endcoords + 1); // find comma to extract way
@@ -194,6 +197,44 @@ int main()
             adj[a].push_back({b, distance, roadId}); // add the edge
             if (oneway != "yes")                     // if it is an undirected graph add the edge in second node
                 adj[b].push_back({a, distance, roadId});
+        }
+    }
+
+    // Input from user
+    string source;
+    cout << "Enter Source: ";
+    getline(cin, source);
+    string destination;
+    cout << "Enter Destination: ";
+    getline(cin, destination);
+
+    string slon = "-1"; // source lon
+    string slat = "-1"; // source lat
+    string dlon = "-1"; // destination lon
+    string dlat = "-1"; // destination lat
+
+    ifstream places("Karachi_Places.csv");
+    getline(places, line);
+    while (getline(places, line))
+    {
+        if (!line.empty() && line.back() == '\r')
+            line.pop_back(); // remove the carriage return from the line
+
+        size_t comma1 = line.find(',', 1); // find first comma
+        string lon = line.substr(0, comma1);
+        size_t comma2 = line.find(',', comma1 + 1); // find second comma
+        string lat = line.substr(comma1 + 1, comma2 - comma1 - 1);
+        string pname = line.substr(comma2 + 1);
+
+        if (pname == source)
+        {
+            slon = lon;
+            slat = lat;
+        }
+        if (pname == destination)
+        {
+            dlon = lon;
+            dlat = lat;
         }
     }
 }
