@@ -5,6 +5,7 @@
 #include <sstream>
 #include <unordered_map>
 #include <cmath>
+#include <algorithm>
 using namespace std;
 
 struct Edge
@@ -153,6 +154,25 @@ void dijkstra(int source, int destination)
     delete[] visited;
 }
 
+// Find the nearest road of user source and destination
+int nearestNode(double lon, double lat)
+{
+    pair<double, double> place = {lon, lat};
+    double minDist = INFINITY;
+    int bestId = -1;
+
+    for (int i = 0; i < nodes.size(); i++)
+    {
+        double val = haversine(place, nodes[i]);
+        if (val < minDist)
+        {
+            minDist = val;
+            bestId = i;
+        }
+    }
+    return bestId;
+}
+
 int main()
 {
     ifstream file("Karachi_Roads.csv"); // Extracting the coords from the csv to form adj list
@@ -212,6 +232,8 @@ int main()
     string slat = "-1"; // source lat
     string dlon = "-1"; // destination lon
     string dlat = "-1"; // destination lat
+    bool sfound = false;
+    bool dfound = false;
 
     ifstream places("Karachi_Places.csv");
     getline(places, line);
@@ -226,15 +248,32 @@ int main()
         string lat = line.substr(comma1 + 1, comma2 - comma1 - 1);
         string pname = line.substr(comma2 + 1);
 
-        if (pname == source)
+        if (!sfound && pname == source)
         {
             slon = lon;
             slat = lat;
+            sfound = true;
         }
-        if (pname == destination)
+        if (!dfound && pname == destination)
         {
             dlon = lon;
             dlat = lat;
+            dfound = true;
         }
+
+        if (sfound && dfound)
+            break;
     }
+
+    if (!sfound || !dfound)
+    {
+        cout << "Places not found";
+        return 0;
+    }
+
+    // Find the nearest road
+    int src = nearestNode(stod(slon), stod(slat));
+    int dest = nearestNode(stod(dlon), stod(dlat));
+
+    dijkstra(src, dest);
 }
