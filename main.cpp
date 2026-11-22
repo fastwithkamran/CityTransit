@@ -122,10 +122,11 @@ void dijkstra(int source, int destination)
 
     // Shortest distance
     if (dist[destination] == INFINITY)
-        cout << "No route" << endl;
+        cout << endl << "No route" << endl;
     else
-        cout << "Shortest distance " << dist[destination] << endl;
+        cout << endl << "Shortest Distance: " << dist[destination] << endl << endl;
 
+    cout << "Shortest Path: " << endl;
     // Print the road with distance
     vector<pair<int, double>> steps;
     for (int v = destination; route[v] != -1; v = route[v]) // loop backwards till source
