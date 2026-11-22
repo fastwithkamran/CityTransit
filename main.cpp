@@ -17,7 +17,7 @@ struct Edge
 vector<pair<double, double>> nodes; // each node has (lat, lon)
 vector<vector<Edge>> adj;           // adjacency list
 unordered_map<string, int> ids;     // unique coordinate pair is a node
-vector<string> roadname;
+vector<string> roadName;
 
 // create node or returns the neighbouring node id
 int getNode(double lat, double lon)
@@ -71,16 +71,28 @@ int minDistance(double dist[], bool visited[])
     return minIndex;
 }
 
+// returns the name of a road id
+string nameOfRoad(int r)
+{
+    if (r == -1 || roadName[r].empty())
+        return "Unnamed road";
+    return roadName[r];
+}
+
 void dijkstra(int source, int destination)
 {
     int n = nodes.size();
     double *dist = new double[n];
     bool *visited = new bool[n];
+    int *route = new int[n];
+    int *roads = new int[n];
 
     for (int i = 0; i < n; i++)
     { // Initialization
         dist[i] = INFINITY;
         visited[i] = false;
+        route[i] = -1;
+        roads[i] = -1;
     }
 
     // source distance is 0
@@ -101,6 +113,8 @@ void dijkstra(int source, int destination)
             if (!visited[v] && dist[u] + e.distance < dist[v])
             {
                 dist[v] = dist[u] + e.distance;
+                route[v] = u;      // v is reached through u
+                roads[v] = e.road; // road used to enter v
             }
         }
     }
@@ -110,6 +124,30 @@ void dijkstra(int source, int destination)
         cout << "No route" << endl;
     else
         cout << "Shortest distance " << dist[destination] << endl;
+
+    // Print the road with distance
+    vector<pair<int, double>> steps;
+    for (int v = destination; route[v] != -1; v = route[v]) // loop backwards till source
+    {
+        int u = route[v]; // u is the node that connect v
+        double d = dist[v] - dist[u];
+        steps.push_back({roads[v], d});
+    }
+
+    reverse(steps.begin(), steps.end());
+
+    // one road name is repeated multiple times
+    for (long long i = 0; i < steps.size();)
+    {
+        string cur = nameOfRoad(steps[i].first); // name of road
+        double total = 0;                        // length
+
+        while (i < steps.size() && nameOfRoad(steps[i].first) == cur) // loop till same road pass
+        {
+            total += steps[i++].second; // sum the distance
+            cout << cur << " (" << total << "m)" << endl;
+        }
+    }
 
     delete[] dist;
     delete[] visited;
@@ -128,8 +166,8 @@ int main()
         string oneway = line.substr(endcoords + 1, endway - endcoords - 1);
         string name = line.substr(endway + 1);
 
-        roadname.push_back(name);         // push the road name
-        int roadId = roadname.size() - 1; // update the road count
+        roadName.push_back(name);         // push the road name
+        int roadId = roadName.size() - 1; // update the road count
 
         vector<pair<double, double>> pts;
         stringstream ss(coords); // to convert it into a file stream
