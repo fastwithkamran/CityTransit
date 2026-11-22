@@ -15,10 +15,17 @@ struct Edge
     int road = -1;
 };
 
+struct Place
+{
+    double lon, lat;
+    string district, town, name;
+};
+
 vector<pair<double, double>> nodes; // each node has (lon, lat)
 vector<vector<Edge>> adj;           // adjacency list
 unordered_map<string, int> ids;     // unique coordinate pair is a node
-vector<string> roadName;
+vector<string> roadName;            // store road names
+vector<Place> allPlaces;            // store places with district and town
 
 // create node or returns the neighbouring node id
 int getNode(double lon, double lat)
@@ -122,9 +129,12 @@ void dijkstra(int source, int destination)
 
     // Shortest distance
     if (dist[destination] == INFINITY)
-        cout << endl << "No route" << endl;
+        cout << endl
+             << "No route" << endl;
     else
-        cout << endl << "Shortest Distance: " << dist[destination] << endl << endl;
+        cout << endl
+             << "Shortest Distance: " << dist[destination] << endl
+             << endl;
 
     cout << "Shortest Path: " << endl;
     // Print the road with distance
@@ -176,6 +186,64 @@ int nearestNode(double lon, double lat)
     return bestId;
 }
 
+// user enter the selected option
+int selectInput(vector<string> &options, string label)
+{
+    cout << "Select " << label << ";" << endl;
+    for (int i = 0; i < options.size(); i++)
+    {
+        cout << i + 1 << " " << options[i] << endl;
+    }
+
+    int userinput;
+    cout << "Enter: ";
+    cin >> userinput;
+
+    return userinput;
+}
+
+// user can select a place from the Place struct
+Place pickPlace()
+{
+    // display the districts
+    vector<string> districts;
+    // Extract the districts
+    for (Place &p : allPlaces)
+    {
+        if (find(districts.begin(), districts.end(), p.district) == districts.end())
+            districts.push_back(p.district);
+    }
+
+    int index = selectInput(districts, "District");
+    string district = districts[index];
+
+    vector<string> towns;
+    // Extract the towns
+    for (Place &p : allPlaces)
+    {
+        if (p.district == district && find(towns.begin(), towns.end(), p.town) == towns.end())
+            towns.push_back(p.town);
+    }
+
+    index = selectInput(towns, "Town");
+    string town = towns[index];
+
+    // Extract the places
+    vector<Place> matches; // store the match places
+    vector<string> names;
+    for (Place &p : allPlaces)
+    {
+        if (p.district == district && p.town == town)
+        {
+            matches.push_back(p);
+            names.push_back(p.name);
+        }
+    }
+
+    index = selectInput(names, "Place");
+    return matches[index]; // return the selected place
+}
+
 int main()
 {
     ifstream file("Karachi_Roads.csv"); // Extracting the coords from the csv to form adj list
@@ -223,61 +291,42 @@ int main()
         }
     }
 
-    // Input from user
-    string source;
-    cout << "Enter Source: ";
-    getline(cin, source);
-    string destination;
-    cout << "Enter Destination: ";
-    getline(cin, destination);
-
-    string slon = "-1"; // source lon
-    string slat = "-1"; // source lat
-    string dlon = "-1"; // destination lon
-    string dlat = "-1"; // destination lat
-    bool sfound = false;
-    bool dfound = false;
-
+    // Menu Option for User
     ifstream places("Karachi_Places.csv");
     getline(places, line);
+
     while (getline(places, line))
     {
-        if (!line.empty() && line.back() == '\r')
+        if (line.empty())
+            continue;
+
+        if (line.back() == '\r')
             line.pop_back(); // remove the carriage return from the line
 
-        size_t comma1 = line.find(',', 1); // find first comma
-        string lon = line.substr(0, comma1);
-        size_t comma2 = line.find(',', comma1 + 1); // find second comma
-        string lat = line.substr(comma1 + 1, comma2 - comma1 - 1);
-        string pname = line.substr(comma2 + 1);
+        size_t comma1 = line.find(',', 1); // find comma
+        size_t comma2 = line.find(',', comma1 + 1);
+        size_t comma3 = line.find(',', comma2 + 1);
+        size_t comma4 = line.find(',', comma3 + 1);
+        string district = line.substr(comma2 + 1, comma3 - comma2 - 1);
 
-        if (!sfound && pname == source)
-        {
-            slon = lon;
-            slat = lat;
-            sfound = true;
-        }
-        if (!dfound && pname == destination)
-        {
-            dlon = lon;
-            dlat = lat;
-            dfound = true;
-        }
-
-        if (sfound && dfound)
-            break;
+        Place p; // push into the place struct
+        p.lon = stod(line.substr(0, comma1));
+        p.lat = stod(line.substr(comma1 + 1, comma2 - comma1 - 1));
+        p.district = line.substr(comma2 + 1, comma3 - comma2 - 1);
+        p.town = line.substr(comma3 + 1, comma4 - comma3 - 1);
+        p.name = line.substr(comma4 + 1);
+        allPlaces.push_back(p);
     }
 
-    if (!sfound)
-        cout << "Source not found\n";
-    if (!dfound)
-        cout << "Destination not found\n";
-    if (!sfound || !dfound)
-        return 0;
+    // User select the source and destination
+    cout << "Choose Source: " << endl;
+    Place s = pickPlace();
+    cout << "Choose Destination: " << endl;
+    Place d = pickPlace();
 
     // Find the nearest road
-    int src = nearestNode(stod(slon), stod(slat));
-    int dest = nearestNode(stod(dlon), stod(dlat));
+    int src = nearestNode(s.lon, s.lat);
+    int dest = nearestNode(d.lon, d.lat);
 
     dijkstra(src, dest);
 }
