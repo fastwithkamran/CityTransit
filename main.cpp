@@ -11,11 +11,13 @@ struct Edge
 {
     int to;
     double distance;
+    int road = -1;
 };
 
 vector<pair<double, double>> nodes; // each node has (lat, lon)
 vector<vector<Edge>> adj;           // adjacency list
 unordered_map<string, int> ids;     // unique coordinate pair is a node
+vector<string> roadname;
 
 // create node or returns the neighbouring node id
 int getNode(double lat, double lon)
@@ -97,10 +99,13 @@ void dijkstra(int source, int destination)
         {
             int v = e.to; // get the neighbour node
             if (!visited[v] && dist[u] + e.distance < dist[v])
+            {
                 dist[v] = dist[u] + e.distance;
+            }
         }
     }
 
+    // Shortest distance
     if (dist[destination] == INFINITY)
         cout << "No route" << endl;
     else
@@ -121,6 +126,10 @@ int main()
         string coords = line.substr(0, endcoords - 1);
         size_t endway = line.find(',', endcoords + 1); // find comma to extract way
         string oneway = line.substr(endcoords + 1, endway - endcoords - 1);
+        string name = line.substr(endway + 1);
+
+        roadname.push_back(name);         // push the road name
+        int roadId = roadname.size() - 1; // update the road count
 
         vector<pair<double, double>> pts;
         stringstream ss(coords); // to convert it into a file stream
@@ -144,11 +153,9 @@ int main()
         {
             int a = neighbors[i], b = neighbors[i + 1]; // a and b are neighbor nodes so there is a edge btw them
             double distance = haversine(pts[i], pts[i + 1]);
-            adj[a].push_back({b, distance}); // add the edge
-            if (oneway != "yes")             // if it is an undirected graph add the edge in second node
-                adj[b].push_back({a, distance});
+            adj[a].push_back({b, distance, roadId}); // add the edge
+            if (oneway != "yes")                     // if it is an undirected graph add the edge in second node
+                adj[b].push_back({a, distance, roadId});
         }
     }
-
-    dijkstra(0, 100);
 }
