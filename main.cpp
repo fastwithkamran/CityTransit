@@ -39,7 +39,7 @@ int getNode(double lon, double lat)
 // find the distance from lat lon btw two nodes
 double haversine(pair<double, double> p1, pair<double, double> p2)
 {
-    const float PI = 3.14;
+    const double PI = 3.14159265358979;
     double radius = 6371000.0;  // earth radius in meters
     double radian = PI / 180.0; // turn GPS degrees into radians
 
@@ -146,8 +146,8 @@ void dijkstra(int source, int destination)
         while (i < steps.size() && nameOfRoad(steps[i].first) == cur) // loop till same road pass
         {
             total += steps[i++].second; // sum the distance
-            cout << cur << " (" << total << "m)" << endl;
         }
+        cout << cur << " (" << total << "m)" << endl;
     }
 
     delete[] dist;
@@ -184,7 +184,7 @@ int main()
             line.pop_back(); // remove the carriage return from the line
 
         size_t endcoords = line.find(',', 1); // find comma to extract coords
-        string coords = line.substr(0, endcoords - 1);
+        string coords = line.substr(0, endcoords);
         size_t endway = line.find(',', endcoords + 1); // find comma to extract way
         string oneway = line.substr(endcoords + 1, endway - endcoords - 1);
         string name = line.substr(endway + 1);
@@ -265,11 +265,12 @@ int main()
             break;
     }
 
+    if (!sfound)
+        cout << "Source not found\n";
+    if (!dfound)
+        cout << "Destination not found\n";
     if (!sfound || !dfound)
-    {
-        cout << "Places not found";
         return 0;
-    }
 
     // Find the nearest road
     int src = nearestNode(stod(slon), stod(slat));
