@@ -14,22 +14,22 @@ struct Edge
     int road = -1;
 };
 
-vector<pair<double, double>> nodes; // each node has (lat, lon)
+vector<pair<double, double>> nodes; // each node has (lon, lat)
 vector<vector<Edge>> adj;           // adjacency list
 unordered_map<string, int> ids;     // unique coordinate pair is a node
 vector<string> roadName;
 
 // create node or returns the neighbouring node id
-int getNode(double lat, double lon)
+int getNode(double lon, double lat)
 {
-    string key = to_string(lat) + "," + to_string(lon); // convert the coord into a key
+    string key = to_string(lon) + "," + to_string(lat); // convert the coord into a key
     auto flag = ids.find(key);                          // check is this key exists in map, returns the address
     if (flag != ids.end())                              // found, reuse the id
         return flag->second;                            // return the id
 
     int id = nodes.size();
     ids[key] = id;               // add key into the map
-    nodes.push_back({lat, lon}); // push the new node
+    nodes.push_back({lon, lat}); // push the new node
     adj.push_back({});           // edge list for the new node
 
     return id;
@@ -42,8 +42,8 @@ double haversine(pair<double, double> p1, pair<double, double> p2)
     double radius = 6371000.0;  // earth radius in meters
     double radian = PI / 180.0; // turn GPS degrees into radians
 
-    double lat1 = p1.first, lon1 = p1.second;
-    double lat2 = p2.first, lon2 = p2.second;
+    double lon1 = p1.first, lat1 = p1.second;
+    double lon2 = p2.first, lat2 = p2.second;
 
     double dlat = (lat2 - lat1) * radian; // convert degrees into radians
     double dlon = (lon2 - lon1) * radian;
@@ -177,7 +177,7 @@ int main()
             size_t gap = p.find(' ');            // find the space to separate lon lat
             double lon = stod(p.substr(0, gap)); // stod converts string to double
             double lat = stod(p.substr(gap + 1));
-            pts.push_back({lat, lon}); // push the lat lon
+            pts.push_back({lon, lat}); // push the lon lat
         }
 
         vector<int> neighbors;
