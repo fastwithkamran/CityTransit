@@ -131,10 +131,12 @@ void dijkstra(int source, int destination)
     if (dist[destination] == INFINITY)
         cout << endl
              << "No route" << endl;
-    else
-        cout << endl
-             << "Shortest Distance: " << dist[destination] << endl
-             << endl;
+    else{
+
+        double estMinutes = dist[destination] * 0.002;
+        cout << endl         << "Shortest Distance: " << dist[destination] << " m" << endl         << "Estimated Time: " << estMinutes << " mins" << endl<< endl;
+         }
+
 
     cout << "Shortest Path: " << endl;
     // Print the road with distance
