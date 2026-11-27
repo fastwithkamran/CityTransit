@@ -2,9 +2,8 @@
 #include "types.h"
 #include <vector>
 #include <string>
-using namespace std;
 
 // user enter the selected option
-int selectInput(vector<string> &options, string label);
+int selectInput(std::vector<std::string> &options, std::string label);
 // user can select a place from the Place struct
 Place pickPlace();

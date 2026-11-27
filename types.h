@@ -1,7 +1,5 @@
 #pragma once
 #include <string>
-using namespace std;
-
 struct Edge
 {
     int to;
@@ -12,5 +10,5 @@ struct Edge
 struct Place
 {
     double lon, lat;
-    string district, town, name;
+    std::string district, town, name;
 };
