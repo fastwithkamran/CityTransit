@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <cctype>
 #include <algorithm>
 using namespace std;
 
@@ -16,10 +17,20 @@ int selectInput(vector<string> &options, string label)
     }
 
     int userinput;
+
     cout << "Enter: ";
     cin >> userinput;
 
     return userinput - 1; // since index starts from 0
+}
+
+string toLower(string s)
+{
+    for (char &c : s)
+    {
+        c = tolower(c);
+    }
+    return s;
 }
 
 // user can select a place from the Place struct
@@ -49,17 +60,37 @@ Place pickPlace()
     string town = towns[index];
 
     // Extract the places
-    vector<Place> matches; // store the match places
-    vector<string> names;
-    for (Place &p : allPlaces)
+    while (true)
     {
-        if (p.district == district && p.town == town)
+        // Search places
+        string text;
+        cout << "Search place: ";
+        getline(cin, text);
+        string s = toLower(text);
+
+        vector<Place> matches; // store the match places
+        vector<string> names;
+        for (Place &p : allPlaces)
         {
-            matches.push_back(p);
-            names.push_back(p.name);
+            if (p.district == district && p.town == town && toLower(p.name).find(s) != string::npos)
+            {
+                matches.push_back(p);
+                names.push_back(p.name);
+            }
+        }
+
+        if (matches.empty())
+        {
+            cout << "No such place found.." << endl;
+        }
+        else if (matches.size() > 30)
+        {
+            cout << matches.size() - 30 << " more places matches, type more letters to find your desire place." << endl;
+        }
+        else
+        {
+            index = selectInput(names, "Place");
+            return matches[index]; // return the selected place
         }
     }
-
-    index = selectInput(names, "Place");
-    return matches[index]; // return the selected place
 }
