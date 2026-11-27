@@ -8,6 +8,7 @@ using namespace std;
 // Find the unvisited vertex with minimum distance
 int minDistance(double dist[], bool visited[])
 {
+    cout << "Searching for shortest route.." << endl;
     int n = nodes.size();
     double min = INFINITY;
     int minIndex = -1;
