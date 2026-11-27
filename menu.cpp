@@ -17,11 +17,19 @@ int selectInput(vector<string> &options, string label)
     }
 
     int userinput;
+    while (true)
+    {
+        cout << "Enter: ";
+        cin >> userinput;
+        if (userinput > 0 && !isalpha(userinput) && userinput <= options.size())
+        {
+            break;
+        }
+        cout << "Wrong Input.." << endl;
+    }
 
-    cout << "Enter: ";
-    cin >> userinput;
-
-    return userinput - 1; // since index starts from 0
+    cin.ignore(10000, '\n'); // ignore the newline escape sequence
+    return userinput - 1;    // since index starts from 0
 }
 
 string toLower(string s)
