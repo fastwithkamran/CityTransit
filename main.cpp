@@ -1,11 +1,11 @@
-#include "state.h"
-#include "graph.cpp"
-#include "menu.cpp"
-#include "route.cpp"
-#include "places.cpp"
 #include <iostream>
-
 using namespace std;
+
+#include "state.h"
+#include "graph.h"
+#include "menu.h"
+#include "route.h"
+#include "places.h"
 
 vector<pair<double, double>> nodes; // each node has (lon, lat)
 vector<vector<Edge>> adj;           // adjacency list
