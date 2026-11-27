@@ -20,16 +20,21 @@ int selectInput(vector<string> &options, string label)
     while (true)
     {
         cout << "Enter: ";
-        cin >> userinput;
-        if (userinput > 0 && !isalpha(userinput) && userinput <= options.size())
+
+        if (!(cin >> userinput) || userinput <= 0 || userinput > options.size())
+        {
+            cout << "Wrong Input.." << endl;
+            cin.clear();             // reset error flag
+            cin.ignore(10000, '\n'); // ignore the bad characters stuck in the memory buffer
+        }
+        else
         {
             break;
         }
-        cout << "Wrong Input.." << endl;
     }
-
-    cin.ignore(10000, '\n'); // ignore the newline escape sequence
-    return userinput - 1;    // since index starts from 0
+    
+    cin.ignore(10000, '\n'); // ignore the bad characters stuck in the memory buffer
+    return userinput - 1; // since index starts from 0
 }
 
 string toLower(string s)
