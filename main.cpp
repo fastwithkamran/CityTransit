@@ -31,4 +31,6 @@ int main()
     int dest = nearestNode(d.lon, d.lat);
 
     dijkstra(src, dest);
+    cout << "Destination Reached: " << d.name << endl;
+    
 }
