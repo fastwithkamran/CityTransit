@@ -7,3 +7,5 @@
 int selectInput(std::vector<std::string> &options, std::string label);
 // user can select a place from the Place struct
 Place pickPlace();
+// lower case
+std::string toLower(std::string s);
